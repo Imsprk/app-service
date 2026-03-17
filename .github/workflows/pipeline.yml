@@ -1,0 +1,32 @@
+name: Pipeline
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  # Step 1 — Run CI from central-workflows
+  ci:
+    uses: Imsprk/central-workflows/.github/workflows/reusable-ci.yml@main
+    with:
+      python-version: "3.11"
+
+  # Step 2 — Build Docker image (push only on main, not PRs)
+  docker:
+    needs: ci
+    uses: Imsprk/central-workflows/.github/workflows/reusable-docker.yml@main
+    with:
+      image-name: "app-service"
+      push: ${{ github.ref == 'refs/heads/main' && github.event_name == 'push' }}
+
+  # Step 3 — Show outputs from previous jobs
+  summary:
+    needs: [ci, docker]
+    runs-on: ubuntu-latest
+    steps:
+      - name: Print outputs
+        run: |
+          echo "CI status   : ${{ needs.ci.outputs.build-status }}"
+          echo "Docker tag  : ${{ needs.docker.outputs.image-tag }}"
