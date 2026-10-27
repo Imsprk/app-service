@@ -16,6 +16,9 @@ jobs:
   # Step 2 — Build Docker image (push only on main, not PRs)
   docker:
     needs: ci
+    permissions:
+      contents: read
+      packages: write
     uses: Imsprk/central-workflows/.github/workflows/reusable-docker.yml@main
     with:
       image-name: "app-service"
