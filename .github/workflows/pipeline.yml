@@ -7,7 +7,7 @@ on:
     branches: [main]
 
 jobs:
-  # Step 1 — Run CI from central-workflows
+  # Step 1 — Run CI from central
   ci:
     uses: Imsprk/central-workflows/.github/workflows/reusable-ci.yml@main
     with:
